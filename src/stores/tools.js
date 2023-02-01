@@ -1,38 +1,43 @@
-import { defineStore } from 'pinia'
+import { defineStore } from 'pinia';
+import { HYDRA_ENUM } from '@/types';
 
 export const useToolsStore = defineStore('tools', {
   state: () => ({
-    hydra: {},
-    hydraResources: {
-        oscillator: {
-          kind: 'oscillator',
-          items: []
-        },
-        filter: {
-          kind: 'filter',
-          items: []
-        },
-        source: {
-          kind: 'source',
-          items: []
-        },
-        geometry: {
-          kind: 'geometry',
-          items: []
-        },
-        color: {
-          kind: 'color',
-          items: []
-        },
-        blend: {
-          kind: 'blend',
-          items: []
-        },
-        modulator: {
-          kind: 'modulator',
-          items: []
-        }
-      }
+    hydra:          {},
+    hydraResources: [
+      {
+        kind:  HYDRA_ENUM.BUFFER,
+        items: []
+      },
+      {
+        kind:  HYDRA_ENUM.RENDER,
+        items: []
+      },
+      {
+        kind:  HYDRA_ENUM.BLEND,
+        items: []
+      },
+      {
+        kind:  HYDRA_ENUM.COLOR,
+        items: []
+      },
+      {
+        kind:  HYDRA_ENUM.GEOMETRY,
+        items: []
+      },
+      {
+        kind:  HYDRA_ENUM.MODULATE,
+        items: []
+      },
+      {
+        kind:  HYDRA_ENUM.SOURCE,
+        items: []
+      },
+      {
+        kind:  HYDRA_ENUM.SYNTH_SETTINGS,
+        items: []
+      },
+    ]
   }),
 
   getters: {
@@ -41,28 +46,7 @@ export const useToolsStore = defineStore('tools', {
     },
     resources() {
       return this.$state.hydraResources;
-    },
-    oscillator() {
-      return this.$state.hydraResources.oscillator;
-    },
-    filter() {
-      return this.$state.hydraResources.filter;
-    },
-    source() {
-      return this.$state.hydraResources.source;
-    },
-    geometry() {
-      return this.$state.hydraResources.geometry;
-    },
-    color() {
-      return this.$state.hydraResources.color;
-    },
-    blend() {
-      return this.$state.hydraResources.blend;
-    },
-    modulator() {
-      return this.$state.hydraResources.modulator;
-    },
+    }
   },
 
   actions: {
@@ -71,11 +55,22 @@ export const useToolsStore = defineStore('tools', {
     },
 
     addResource({ kind, value }) {
-      this[kind].items.push(value);
+      const out =  this.resources.find((resource) => resource.kind === kind);
+
+      out.items.push(value);
     },
 
     removeResource({ kind, index }) {
-      this[kind].items.splice(index, 1);
+      const out =  this.resources.find((resource) => resource.kind === kind);
+
+      out.items.splice(index, 1);
+    },
+
+    addFunction({ kind, index, schema }) {
+      const resource =  this.resources.find((resource) => resource.kind === kind);
+      const item = resource.items[index];
+
+      Object.assign(item, schema);
     }
   },
-})
+});

@@ -1,65 +1,54 @@
 <script>
-import { mapActions } from 'pinia';
-import { useToolsStore } from '../../stores/tools';
+import { ref } from 'vue';
 
-import Oscillator from './Resources/Oscillator.vue';
+import { useToolsStore } from '@/stores/tools';
+
+import ResourceSelect from './Resources/ResourceSelect.vue';
 
 export default {
   props: {
     item: {
-      type: Object,
+      type:     Object,
       required: true
     },
     itemIndex: {
-      type: Number,
+      type:     Number,
       required: true
     },
     resourceKind: {
-      type: String,
+      type:     String,
       required: true
     }
   },
 
-  components: { Oscillator },
+  components: { ResourceSelect },
 
-  created() {
-    this.loadComponent();
-  },
+  setup(props, context) {
+    const store = useToolsStore();
+    const resourceHeader = ref(null);
 
-  data() {
+    context.emit('header', resourceHeader);
+
+    function remove(index) {
+      context.emit('remove');
+      store.removeResource({
+        kind: props.resourceKind,
+        index
+      });
+    }
+
     return {
-      itemComponent: null
-    }
-  },
-
-  methods: {
-    ...mapActions(useToolsStore, ['removeResource']),
-
-    capitalize(s) {
-      return s.charAt(0).toUpperCase() + s.slice(1);
-    },
-
-    loadComponent() {
-      this.itemComponent = this.capitalize(this.resourceKind);
-    },
-
-    remove(index) {
-      this.$parent.$emit('remove')
-      this.removeResource({ kind: this.resourceKind, index });
-    },
-
-    updateItem(e) {
-      console.log('updateItem: ', e);
-    }
+      store,
+      remove
+    };
   }
-}
-
+};
 </script>
 
 <template>
   <div class="card">
-    <div class="header">
-      <span>{{ capitalize(resourceKind) + itemIndex }}</span>
+    <div class="header moveable-dimension" ref="resourceHeader">
+      <span>{{ resourceKind + itemIndex }}</span>
 
       <img
         src="../../assets/icons/icon-close.png"
@@ -70,7 +59,7 @@ export default {
     </div>
 
     <div class="body">
-      <component :is="itemComponent" :value="item" @input="updateItem" />
+      <ResourceSelect :value="item" :kind="resourceKind" :index="itemIndex" />
     </div>
   </div>
 </template>

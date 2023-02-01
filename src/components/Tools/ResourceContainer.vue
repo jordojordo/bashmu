@@ -1,6 +1,6 @@
 <script>
 import { mapActions } from 'pinia';
-import { useToolsStore } from '../../stores/tools';
+import { useToolsStore } from '@/stores/tools';
 
 import Moveable from './Moveable.vue';
 import ResourceCard from './ResourceCard.vue';
@@ -8,31 +8,34 @@ import ResourceCard from './ResourceCard.vue';
 export default {
   props: {
     resource: {
-      type: Object,
+      type:     Object,
       required: true
     }
   },
 
-  components: { Moveable, ResourceCard },
+  components: {
+    Moveable,
+    ResourceCard
+  },
 
   data: () => ({
     moveable: {
-      draggable: true,
-      throttleDrag: 1,
-      resizable: false,
+      draggable:      true,
+      throttleDrag:   1,
+      resizable:      false,
       throttleResize: 1,
-      keepRatio: false,
-      scalable: true,
-      throttleScale: 0.01,
-      rotatable: true,
+      keepRatio:      false,
+      scalable:       true,
+      throttleScale:  0.01,
+      rotatable:      true,
       throttleRotate: 0.2,
-      pinchable: true,
-      origin: false,
+      pinchable:      true,
+      origin:         false,
     },
     states: {
-      scalable: 'Scalable',
+      scalable:  'Scalable',
       resizable: 'Resizable',
-      warpable: 'Warpable',
+      warpable:  'Warpable',
     },
     currentState: 'scalable',
   }),
@@ -51,7 +54,9 @@ export default {
       target.style.transform = transform;
     },
 
-    handleResize({ target, width, height, transform }) {
+    handleResize({
+      target, width, height, transform
+    }) {
       target.style.width = `${ width }px`;
       target.style.height = `${ height }px`;
       target.style.transform = transform;
@@ -61,9 +66,9 @@ export default {
       Object.keys(this.states).forEach((key) => {
         this.moveable[key] = false;
       });
-    },
+    }
   }
-}
+};
 </script>
 
 <template>

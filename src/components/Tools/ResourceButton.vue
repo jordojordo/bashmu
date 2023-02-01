@@ -1,12 +1,12 @@
 <script>
 import { mapActions } from 'pinia';
 
-import { useToolsStore } from '../../stores/tools';
+import { useToolsStore } from '@/stores/tools';
 
 export default {
   props: {
     resource: {
-      type: Object,
+      type:     Object,
       required: true
     }
   },
@@ -15,14 +15,17 @@ export default {
     ...mapActions(useToolsStore, ['addResource']),
 
     add() {
-      this.addResource({ kind: this.resource.kind, value: {} })
+      this.addResource({
+        kind:  this.resource.kind,
+        value: {}
+      });
     },
 
     capitalize(s) {
       return s.charAt(0).toUpperCase() + s.slice(1);
     }
   }
-}
+};
 </script>
 
 <template>

@@ -1,10 +1,15 @@
 <script>
 import Moveable, { EVENTS, PROPERTIES, METHODS } from 'moveable';
+import kebabCase from 'lodash/kebabCase';
 
 const watchReactiveProp = (key, deep) => ({
   handler(newValue) {
     const existingValue = this.moveable[key];
-    if (existingValue === newValue) return;
+
+    if ( existingValue === newValue ) {
+      return;
+    }
+
     this.moveable[key] = newValue;
   },
   deep,
@@ -12,6 +17,7 @@ const watchReactiveProp = (key, deep) => ({
 
 const watchMoveableProps = () => PROPERTIES.reduce((acc, prop) => {
   acc[prop] = watchReactiveProp(prop, true);
+
   return acc;
 }, {});
 
@@ -19,41 +25,50 @@ export default {
   inheritAttrs: false,
 
   props: {
-    target: [HTMLElement, SVGElement],
+    // target:          [HTMLElement, SVGElement],
     transformOrigin: [Array, String],
-    dragTarget: [HTMLElement, SVGElement],
-    container: {
-      type: [HTMLElement, SVGElement],
+    // dragTarget:      [HTMLElement, SVGElement],
+    container:       {
+      type:    [HTMLElement, SVGElement],
       default: () => document.body,
     },
 
-    draggable: Boolean,
-    originDraggable: Boolean,
-    resizable: Boolean,
-    useResizeObserver: Boolean,
+    draggable:           Boolean,
+    originDraggable:     Boolean,
+    resizable:           Boolean,
+    useResizeObserver:   Boolean,
     individualGroupable: Boolean,
-    rootContainer: HTMLElement,
-    throttleDrag: Number,
-    edgeDraggable: Boolean,
-    snappable: Boolean,
-    bounds: Object,
-    edge: Array,
-    dragArea: Boolean,
-    origin: Boolean,
+    rootContainer:       HTMLElement,
+    throttleDrag:        Number,
+    edgeDraggable:       Boolean,
+    snappable:           Boolean,
+    bounds:              Object,
+    edge:                Array,
+    dragArea:            Boolean,
+    origin:              Boolean,
+  },
+
+  data() {
+    return { dragTarget: null };
   },
 
   mounted() {
+    // Only drag the target from the header, which allows input use in body of card
+    this.dragTarget = this.$el.firstElementChild.childNodes[0];
+
     this.moveable = new Moveable(this.$props.container, {
       ...this.$props,
-      target: this.target || this.$el,
+      dragTarget: this.dragTarget,
+      target:     this.target || this.$el
     });
 
     EVENTS.forEach((event) => {
-      const kebabCaseEvent = event.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
+      const kebabCaseEvent = kebabCase(event);
+
       this.moveable.on(event, this.$emit.bind(this, kebabCaseEvent));
       this.moveable.on(event, this.$emit.bind(this, event));
     });
-    
+
     window.addEventListener('resize', this.updateRect, { passive: true });
   },
 
@@ -62,9 +77,7 @@ export default {
     this.moveable.destroy();
   },
 
-  watch: {
-    ...watchMoveableProps(),
-  },
+  watch: { ...watchMoveableProps() },
 
   methods: {
     methodMap() {
@@ -77,13 +90,18 @@ export default {
 
     removeCard() {
       this.moveable.destroy();
+    },
+
+    updateTarget(event) {
+      console.log('## updateTarget: ', event);
+      this.dragTarget = event;
     }
   },
 };
 </script>
 
 <template>
-  <div class="moveable-card" @remove="removeCard">
+  <div class="moveable-card" @header="updateTarget" @remove="removeCard">
     <slot name="resourceItem" />
   </div>
 </template>

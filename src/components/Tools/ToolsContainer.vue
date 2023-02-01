@@ -1,17 +1,18 @@
 <script>
 import { mapState } from 'pinia';
-import { useToolsStore } from '../../stores/tools';
+import { useToolsStore } from '@/stores/tools';
 
 import ResourceButton from './ResourceButton.vue';
 import ResourceContainer from './ResourceContainer.vue';
 
 export default {
-  components: { ResourceButton, ResourceContainer },
+  components: {
+    ResourceButton,
+    ResourceContainer
+  },
 
-  computed: {
-    ...mapState(useToolsStore, ['resources']),
-  }
-}
+  computed: { ...mapState(useToolsStore, ['resources']) }
+};
 </script>
 
 <template>

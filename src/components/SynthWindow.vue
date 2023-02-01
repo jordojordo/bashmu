@@ -2,13 +2,13 @@
 import { mapActions, mapState } from 'pinia';
 import HydraSynth from 'hydra-synth';
 
-import { useToolsStore } from '../stores/tools';
+import { useToolsStore } from '@/stores/tools';
 
 export default {
   mounted() {
     const synth = new HydraSynth({
-      detectAudio: true,
-      canvas: this.$refs.hydra
+      'detectAudio': true,
+      'canvas':      this.$refs.hydra
     }).synth;
 
     synth.osc(4, 0.1, 1.2).out();
@@ -27,10 +27,8 @@ export default {
     }
   },
 
-  methods: {
-    ...mapActions(useToolsStore, ['initHydra'])
-  }
-}
+  methods: { ...mapActions(useToolsStore, ['initHydra']) }
+};
 </script>
 
 <template>
