@@ -1,30 +1,40 @@
 <script>
-import { ref } from 'vue';
+import { ref, provide } from 'vue';
 
 import { useToolsStore } from '@/stores/tools';
 
 import ResourceSelect from './Resources/ResourceSelect.vue';
+import TargetSelect from './TargetSelect.vue';
 
 export default {
   props: {
     item: {
-      type:     Object,
-      required: true
+      type:    Object,
+      default: () => {}
     },
     itemIndex: {
-      type:     Number,
-      required: true
+      type:    Number,
+      default: 0
     },
     resourceKind: {
-      type:     String,
-      required: true
+      type:    String,
+      defaunt: ''
     }
   },
 
-  components: { ResourceSelect },
+  components: {
+    ResourceSelect,
+    TargetSelect
+  },
 
   setup(props, context) {
     const store = useToolsStore();
+
+    provide('functionItem', {
+      kind:  props.resourceKind,
+      index: props.itemIndex
+    });
+
     const resourceHeader = ref(null);
 
     context.emit('header', resourceHeader);
@@ -59,7 +69,8 @@ export default {
     </div>
 
     <div class="body">
-      <ResourceSelect :value="item" :kind="resourceKind" :index="itemIndex" />
+      <TargetSelect />
+      <ResourceSelect :value="item" />
     </div>
   </div>
 </template>
@@ -84,9 +95,7 @@ export default {
   align-items: center;
 }
 
-/* .icon-close {
-  position: absolute;
-  right: 0;
-  margin: 2px;
-} */
+.body {
+  padding: 10px;
+}
 </style>

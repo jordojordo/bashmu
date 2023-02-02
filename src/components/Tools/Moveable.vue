@@ -110,8 +110,9 @@ export default {
 .moveable-card {
   min-width: 100px;
   min-height: 100px;
-  width: 200px;
-  height: 200px;
+  width: 233px;
+  height: 300px;
   overflow: hidden;
+  z-index: 99;
 }
 </style>

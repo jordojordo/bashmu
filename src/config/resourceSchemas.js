@@ -14,200 +14,200 @@ export class Time {
   }
 }
 
-const TEXTURE = {
+export const TEXTURE = {
   color: {
-    r: [Number, Array],
-    g: [Number, Array],
-    b: [Number, Array]
+    r: [],
+    g: [],
+    b: []
   },
-  src:   { input: [String, Object] },
+  src:   { input: '' },
   shape: {
-    sides:     Number,
-    radius:    Number,
-    smoothing: Number
+    sides:     0,
+    radius:    0,
+    smoothing: 0
   }
 };
 
 export const resourceSchemas = {
-  [HYDRA_ENUM.BUFFER]: [String, Object],
+  [HYDRA_ENUM.BUFFER]: '',
 
-  [HYDRA_ENUM.RENDER]: [String, Object],
+  [HYDRA_ENUM.RENDER]: '',
 
   [HYDRA_ENUM.SOURCE]: {
     noise: {
-      scale:  [Number, Time],
-      offset: [Number, Time]
+      scale:  0,
+      offset: 0
     },
     voronoi: {
-      scale:    [Number, Time],
-      speed:    [Number, Time],
-      blending: [Number, Time]
+      scale:    0,
+      speed:    0,
+      blending: 0
     },
     osc: {
-      frequency: [Number, Time],
-      sync:      [Number, Array],
-      offset:    [Number, Time]
+      frequency: 0,
+      sync:      [],
+      offset:    0
     },
     shape: {
-      sides:     Number,
-      radius:    Number,
-      smoothing: Number
+      sides:     0,
+      radius:    0,
+      smoothing: 0
     },
-    gradient: { speed: [Number, Array] },
-    src:      { input: [String, Object] },
+    gradient: { speed: [] },
+    src:      { input: '' },
     solid:    {
-      r: [Number, Array],
-      g: [Number, Array],
-      b: [Number, Array],
-      a: [Number, Array]
+      r: [],
+      g: [],
+      b: [],
+      a: []
     }
   },
 
   [HYDRA_ENUM.GEOMETRY]: {
     rotate: {
-      angle: [Number, Time],
-      speed: [Number, Time]
+      angle: 0,
+      speed: 0
     },
     scale: {
-      size:  [Number, Time],
-      xMult: [Number, Array],
-      yMult: [Number, Array]
+      size:  0,
+      xMult: [],
+      yMult: []
     },
     pixelate: {
-      pixelX: [Number, Array],
-      pixelY: [Number, Array]
+      pixelX: [],
+      pixelY: []
     },
     repeat: {
-      repeatX: Number,
-      repeatY: Number,
-      offsetX: Number,
-      offsetY: Number
+      repeatX: 0,
+      repeatY: 0,
+      offsetX: 0,
+      offsetY: 0
     },
     repeatX: {
-      reps:   [Number, Array],
-      offset: [Number, Time]
+      reps:   [],
+      offset: 0
     },
     repeatY: {
-      reps:   [Number, Array],
-      offset: [Number, Time]
+      reps:   [],
+      offset: 0
     },
-    kaleid:  { nSides: Number },
+    kaleid:  { nSides: 0 },
     scrollX: {
-      scrollX: [Number, Array],
-      speed:   [Number, Time]
+      scrollX: [],
+      speed:   0
     },
     scrollY: {
-      scrollY: [Number, Array],
-      speed:   [Number, Time]
+      scrollY: [],
+      speed:   0
     }
   },
 
   [HYDRA_ENUM.COLOR]: {
     posterize: {
-      bins:  [Number, Array],
-      gamma: [Number, Array]
+      bins:  [],
+      gamma: []
     },
     shift: {
-      r: Number,
-      g: Number,
-      b: Number,
-      a: Number
+      r: 0,
+      g: 0,
+      b: 0,
+      a: 0
     },
-    invert:     { amount: [Number, Array] },
-    contrast:   { amount: [Number, Time] },
-    brightness: { amount: [Number, Time] },
+    invert:     { amount: [] },
+    contrast:   { amount: 0 },
+    brightness: { amount: 0 },
     luma:       {
-      threshold: [Number, Array],
-      tolerance: [Number, Array]
+      threshold: [],
+      tolerance: []
     },
     thresh: {
-      threshold: [Number, Time],
-      tolerance: [Number, Array]
+      threshold: 0,
+      tolerance: []
     },
     color: {
-      r: [Number, Array],
-      g: [Number, Array],
-      b: [Number, Array]
+      r: [],
+      g: [],
+      b: []
     },
-    saturate: { amount: [Number, Time] },
-    hue:      { hue: [Number, Time] },
-    colorama: { amount: [Number, Array] }
+    saturate: { amount: 0 },
+    hue:      { hue: 0 },
+    colorama: { amount: [] }
   },
 
   [HYDRA_ENUM.BLEND]: {
     add: {
       texture: TEXTURE,
-      amount:  [Number, Array]
+      amount:  []
     },
     layer: { texture: TEXTURE },
     blend: {
       texture: TEXTURE,
-      amount:  [Number, Array]
+      amount:  []
     },
     mult: {
       texture: TEXTURE,
-      amount:  [Number, Array]
+      amount:  []
     },
     diff: { texture: TEXTURE },
     mask: {
       texture: TEXTURE,
-      reps:    [Number, Array],
-      offset:  [Number, Time]
+      reps:    [],
+      offset:  0
     }
   },
 
   [HYDRA_ENUM.MODULATE]: {
     modulateRepeat: {
       texture: TEXTURE,
-      repeatX: Number,
-      repeatY: Number,
-      offsetX: Number,
-      offsetY: Number
+      repeatX: 0,
+      repeatY: 0,
+      offsetX: 0,
+      offsetY: 0
     },
     modulateRepeatX: {
       texture: TEXTURE,
-      reps:    [Number, Array],
-      offset:  [Number, Time]
+      reps:    [],
+      offset:  0
     },
     modulateRepeatY: {
       texture: TEXTURE,
-      reps:    [Number, Array],
-      offset:  [Number, Time]
+      reps:    [],
+      offset:  0
     },
     modulateKaleid: {
       texture: TEXTURE,
-      nSides:  Number
+      nSides:  0
     },
     modulateScrollX: {
       texture: TEXTURE,
-      speed:   [Number, Time]
+      speed:   0
     },
     modulateScrollY: {
       texture: TEXTURE,
-      speed:   [Number, Time]
+      speed:   0
     },
     modulate: {
       texture: TEXTURE,
-      amount:  [Number, Array]
+      amount:  []
     },
     modulateScale: {
       texture:  TEXTURE,
-      multiple: Number,
-      offset:   [Number, Time]
+      multiple: 0,
+      offset:   0
     },
     modulatePixelate: {
       texture:  TEXTURE,
-      multiple: Number,
-      offset:   [Number, Time]
+      multiple: 0,
+      offset:   0
     },
     modulateRotate: {
       texture:  TEXTURE,
-      multiple: Number,
-      offset:   [Number, Time]
+      multiple: 0,
+      offset:   0
     },
     modulateHue: {
       texture: TEXTURE,
-      amount:  [Number, Array]
+      amount:  []
     }
   }
 };

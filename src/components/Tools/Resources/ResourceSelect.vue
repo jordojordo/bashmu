@@ -1,5 +1,5 @@
 <script>
-import { computed, ref, watch } from 'vue';
+import { computed, inject, ref, watch } from 'vue';
 
 import { useToolsStore } from '@/stores/tools';
 import { HYDRA_FUNCTIONS } from '@/types';
@@ -10,63 +10,58 @@ import FunctionBody from './FunctionBody.vue';
 export default {
   name: 'ResourceSelect',
 
-  props: {
-    index: {
-      type:     Number,
-      required: true
-    },
-    kind: {
-      type:     String,
-      required: true
-    },
-    value: {
-      type:    Object,
-      default: () => {}
-    }
-  },
-
   components: { FunctionBody },
 
-  setup(props) {
+  setup() {
     const store = useToolsStore();
+    const functionItem = inject('functionItem');
 
     const selectedFunction = ref('');
+
+    const functionValue = computed(() => {
+      return store.functionValue({
+        kind:  functionItem.kind,
+        index: functionItem.index
+      });
+    });
+    const functionSchema = computed(() => {
+      return store.functionSchema({
+        kind:  functionItem.kind,
+        index: functionItem.index
+      });
+    });
 
     watch(selectedFunction, () => {
       let schema = null;
 
       for ( const key in resourceSchemas ) {
-        if ( key === props.kind ) {
+        if ( key === functionItem.kind ) {
           schema = resourceSchemas[key][selectedFunction.value];
         }
       }
 
       if ( schema ) {
         store.addFunction({
-          kind:  props.kind,
-          index: props.index,
-          schema,
+          kind:     functionItem.kind,
+          index:    functionItem.index,
+          multiple: false, // TODO: need ability to add multiple functions to item
+          schema
         });
       }
     });
 
     const functionOptions = computed(() => {
-      const functionType = HYDRA_FUNCTIONS[props.kind];
+      const functionType = HYDRA_FUNCTIONS[functionItem.kind];
 
       return functionType;
     });
 
-    const updateResource = (event) => {
-      console.log('### updateResource event: ', event);
-
-      return event;
-    };
-
     return {
       store,
       functionOptions,
-      selectedFunction,
-      updateResource
+      functionValue,
+      functionSchema,
+      selectedFunction
     };
   },
 };
@@ -74,7 +69,7 @@ export default {
 
 <template>
   <div>
-    <div>
+    <div class="header">
       <label for="functionSelect">Function Type:</label>
 
       <select v-model="selectedFunction">
@@ -84,8 +79,17 @@ export default {
       </select>
     </div>
 
-    <div v-if="functionComponent" @input="updateResource">
-      <FunctionBody :value="value" />
+    <div v-if="selectedFunction">
+      <FunctionBody
+        :value="functionValue"
+        :schema="functionSchema"
+      />
     </div>
   </div>
 </template>
+
+<style scoped>
+.header label {
+  margin-right: 10px;
+}
+</style>

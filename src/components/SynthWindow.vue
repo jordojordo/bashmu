@@ -1,33 +1,49 @@
 <script>
-import { mapActions, mapState } from 'pinia';
+import { computed, onMounted, ref, watch } from 'vue';
 import HydraSynth from 'hydra-synth';
 
 import { useToolsStore } from '@/stores/tools';
 
 export default {
-  mounted() {
-    const synth = new HydraSynth({
-      'detectAudio': true,
-      'canvas':      this.$refs.hydra
-    }).synth;
+  setup() {
+    const store = useToolsStore();
 
-    synth.osc(4, 0.1, 1.2).out();
-    this.initHydra(synth);
-  },
+    const hydra = ref(null);
+    const synth = ref(null);
 
-  computed: {
-    ...mapState(useToolsStore, ['hydraState']),
+    const height = computed(() => window.innerHeight);
+    const width  = computed(() => window.innerWidth);
 
-    height() {
-      return window.innerHeight;
-    },
+    const buffers   = computed(() => store.buffers);
+    const renders   = computed(() => store.renders);
 
-    width() {
-      return window.innerWidth;
-    }
-  },
+    const allFunctions = computed(() => store.allFunctions);
 
-  methods: { ...mapActions(useToolsStore, ['initHydra']) }
+    onMounted(() => {
+      synth.value = new HydraSynth({
+        'detectAudio': false,
+        'canvas':      hydra.value
+      }).synth;
+
+      synth.value.osc(4, 0.1, 1.2).out();
+      store.initHydra(synth.value);
+    });
+
+    watch(allFunctions, (neu, old) => {
+      console.log('### new functions: ', neu);
+      console.log('# old functions: ', old);
+    });
+
+    return {
+      store,
+      hydra,
+      height,
+      width,
+      buffers,
+      allFunctions,
+      renders
+    };
+  }
 };
 </script>
 

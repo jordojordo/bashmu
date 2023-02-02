@@ -8,7 +8,7 @@ import ResourceCard from './ResourceCard.vue';
 export default {
   props: {
     resource: {
-      type:     Object,
+      type:     [Array, Object],
       required: true
     }
   },
@@ -72,9 +72,10 @@ export default {
 </script>
 
 <template>
-  <template v-for="(item, index) in resource.items" :key="index">
+  <template v-if="resource.items.length" >
     <Moveable
-      v-if="resource.items.length"
+      v-for="(item, index) in resource.items"
+      :key="index"
       class="moveable"
       v-bind="moveable"
       :draggable="true"
