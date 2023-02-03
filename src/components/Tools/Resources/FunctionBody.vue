@@ -40,7 +40,7 @@ export default {
           return loadComponent('array');
         }
 
-        if ( Object.hasOwn(props.schema, 'texture') ) {
+        if ( Object.hasOwn(props.schema[props.selectedFunction], 'texture') ) {
           return loadComponent('texture');
         }
       }

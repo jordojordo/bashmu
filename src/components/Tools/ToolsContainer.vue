@@ -73,6 +73,6 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: start;
-  background: rgb(63, 63, 63);
+  background: rgb(47, 51, 53);
 }
 </style>

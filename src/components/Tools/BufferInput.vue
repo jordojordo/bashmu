@@ -48,7 +48,7 @@ export default {
 .container {
   display: flex;
   flex-direction: column;
-  color: honeydew;
+  color: rgb(194, 255, 194);
   margin-right: 10px;
 }
 

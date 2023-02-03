@@ -10,29 +10,35 @@ export const useToolsStore = defineStore('tools', {
       {
         kind:          HYDRA_ENUM.BLEND,
         items:         [],
+        sourceTargets: [],
         bufferTargets: [],
         weight:        95
       },
       {
         kind:          HYDRA_ENUM.COLOR,
         items:         [],
+        sourceTargets: [],
         bufferTargets: [],
         weight:        96
       },
       {
         kind:          HYDRA_ENUM.GEOMETRY,
         items:         [],
+        sourceTargets: [],
         bufferTargets: [],
         weight:        98
       },
       {
         kind:          HYDRA_ENUM.MODULATE,
         items:         [],
+        sourceTargets: [],
         bufferTargets: [],
         weight:        97
       },      {
         kind:          HYDRA_ENUM.SOURCE,
         items:         [],
+        sourceNames:   [],
+        sourceTargets: [],
         bufferTargets: [],
         weight:        99
       }
@@ -107,6 +113,35 @@ export const useToolsStore = defineStore('tools', {
       }
 
       Object.assign(item, schema);
+    },
+
+    addSourceName({ index, name }) {
+      const names = this.sources.sourceNames;
+      const existing = names.map((i) => Object.keys(i)[index]);
+
+      if ( existing ) {
+        this.$patch((state) => {
+          const resource = state.hydraResources.find((resource) => resource.kind === HYDRA_ENUM.SOURCE);
+
+          resource.sourceNames[index] = name;
+        });
+
+        return;
+      }
+
+      names.push({ [index]: name });
+    },
+
+    addSourceTarget({ kind, index, source }) {
+      const resource = this.currentResource({ kind });
+
+      resource.sourceTargets.push({ [index]: source });
+    },
+
+    removeSourceTarget({ kind, index }) {
+      const resource = this.currentResource({ kind });
+
+      delete resource.sourceNames[index];
     },
 
     addBufferTargets({ kind, index, buffer }) {

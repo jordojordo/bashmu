@@ -17,3 +17,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+html, body, input, textarea, select, button {
+  background-color: #181a1b;
+  border-color: #736b5e;
+  color: #e8e6e3;
+}
