@@ -58,7 +58,7 @@ export default {
 <template>
   <div class="card">
     <div class="header moveable-dimension" ref="resourceHeader">
-      <span>{{ resourceKind + itemIndex }}</span>
+      <span>{{ resourceKind }} ({{ itemIndex + 1}})</span>
 
       <img
         src="../../assets/icons/icon-close.png"

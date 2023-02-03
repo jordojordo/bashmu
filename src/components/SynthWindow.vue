@@ -1,8 +1,10 @@
 <script>
 import { computed, onMounted, ref, watch } from 'vue';
 import HydraSynth from 'hydra-synth';
+import flatMap from 'lodash/flatMap';
 
 import { useToolsStore } from '@/stores/tools';
+import isEmpty from 'lodash/isEmpty';
 
 export default {
   setup() {
@@ -14,10 +16,9 @@ export default {
     const height = computed(() => window.innerHeight);
     const width  = computed(() => window.innerWidth);
 
+    const sources   = computed(() => store.sources);
     const buffers   = computed(() => store.buffers);
     const renders   = computed(() => store.renders);
-
-    const allFunctions = computed(() => store.allFunctions);
 
     onMounted(() => {
       synth.value = new HydraSynth({
@@ -25,14 +26,25 @@ export default {
         'canvas':      hydra.value
       }).synth;
 
-      synth.value.osc(4, 0.1, 1.2).out();
+      synth.value
+        .src(o0)
+        .modulate(noise(3), 0.005)
+        .blend(shape(4), 0.01)
+        .out(o0);
+
       store.initHydra(synth.value);
     });
 
-    watch(allFunctions, (neu, old) => {
-      console.log('### new functions: ', neu);
-      console.log('# old functions: ', old);
-    });
+    watch(sources, (neu) => {
+      for ( const item of neu.items ) {
+        const methodString = Object.keys(item)[0];
+        const args = flatMap(Object.values(item)[0]);
+
+        if ( !isEmpty(args) ) {
+          synth.value[methodString](...args).out();
+        }
+      }
+    }, { deep: true });
 
     return {
       store,
@@ -40,7 +52,7 @@ export default {
       height,
       width,
       buffers,
-      allFunctions,
+      sources,
       renders
     };
   }

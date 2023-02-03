@@ -10,6 +10,10 @@ export default {
       type:    Object,
       default: () => {}
     },
+    selectedFunction: {
+      type:     String,
+      required: true
+    },
     value: {
       type:     Object,
       required: true
@@ -84,7 +88,7 @@ export default {
         const out = resources.find((r) => r.kind === functionItem.kind);
 
         for ( const key of Object.keys(event) ) {
-          out.items[functionItem.index][key] = event[key];
+          out.items[functionItem.index][props.selectedFunction][key] = event[key];
         }
       });
     };
@@ -101,11 +105,11 @@ export default {
 </script>
 
 <template>
-  <div class="component-input" v-for="(val, name, index) in schema" :key="index">
+  <div class="component-input" v-for="(val, name, index) in schema[selectedFunction]" :key="index">
     <component
       :is="componentForType(val)"
       :functionKey="name"
-      :functionValue="getComponentValue(value, name)"
+      :functionValue="getComponentValue(schema[selectedFunction], name)"
       @update="updateFunction"
     />
   </div>

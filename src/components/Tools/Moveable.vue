@@ -114,5 +114,6 @@ export default {
   height: 300px;
   overflow: hidden;
   z-index: 99;
+  position: absolute;
 }
 </style>

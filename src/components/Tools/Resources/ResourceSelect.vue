@@ -45,7 +45,7 @@ export default {
           kind:     functionItem.kind,
           index:    functionItem.index,
           multiple: false, // TODO: need ability to add multiple functions to item
-          schema
+          schema:   { [selectedFunction.value]: schema }
         });
       }
     });
@@ -83,6 +83,7 @@ export default {
       <FunctionBody
         :value="functionValue"
         :schema="functionSchema"
+        :selectedFunction="selectedFunction"
       />
     </div>
   </div>

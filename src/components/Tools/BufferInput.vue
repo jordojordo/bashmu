@@ -49,7 +49,7 @@ export default {
   display: flex;
   flex-direction: column;
   color: honeydew;
-  margin-left: 130px;
+  margin-right: 10px;
 }
 
 .container label {

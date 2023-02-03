@@ -1,5 +1,5 @@
 <script>
-import { mapState } from 'pinia';
+import { computed } from 'vue';
 import { useToolsStore } from '@/stores/tools';
 
 import BufferInput from './BufferInput.vue';
@@ -15,7 +15,13 @@ export default {
     ResourceContainer
   },
 
-  computed: { ...mapState(useToolsStore, ['resources']) }
+  setup() {
+    const store = useToolsStore();
+
+    const resources = computed(() => [...store.resources].sort((a, b) => a.weight + b.weight));
+
+    return { resources };
+  }
 };
 </script>
 
@@ -24,7 +30,7 @@ export default {
     <!-- top nav buttons -->
     <nav class="nav">
       <template v-for="(resource, index) in resources" :key="index">
-        <ResourceButton :resource="resource" />
+        <ResourceButton class="resource-button" :resource="resource" />
       </template>
     </nav>
 
@@ -45,23 +51,28 @@ export default {
 
 <style scoped>
 #tools {
-  height: 300px;
+  height: auto;
 }
 
 .nav {
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
+  justify-content: start;
+  padding: 10px 0;
+}
+
+.resource-button {
+  margin-right: 10px;
 }
 
 .bottom-container {
-  position: absolute;
   bottom: 0;
   width: 100%;
-  height: 150px;
+  height: auto;
+  padding: 10px 0;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: start;
   background: rgb(63, 63, 63);
 }
 </style>

@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia';
 import isEmpty from 'lodash/isEmpty';
-import flatMap from 'lodash/flatMap';
 
 import { HYDRA_ENUM } from '@/types';
 
@@ -11,27 +10,31 @@ export const useToolsStore = defineStore('tools', {
       {
         kind:          HYDRA_ENUM.BLEND,
         items:         [],
-        bufferTargets: []
+        bufferTargets: [],
+        weight:        95
       },
       {
         kind:          HYDRA_ENUM.COLOR,
         items:         [],
-        bufferTargets: []
+        bufferTargets: [],
+        weight:        96
       },
       {
         kind:          HYDRA_ENUM.GEOMETRY,
         items:         [],
-        bufferTargets: []
+        bufferTargets: [],
+        weight:        98
       },
       {
         kind:          HYDRA_ENUM.MODULATE,
         items:         [],
-        bufferTargets: []
-      },
-      {
+        bufferTargets: [],
+        weight:        97
+      },      {
         kind:          HYDRA_ENUM.SOURCE,
         items:         [],
-        bufferTargets: []
+        bufferTargets: [],
+        weight:        99
       }
     ],
     [HYDRA_ENUM.BUFFER]: [],
@@ -55,14 +58,14 @@ export const useToolsStore = defineStore('tools', {
       return this.$state.hydraResources;
     },
 
+    sources() {
+      return this.$state.hydraResources.find((resource) => resource.kind === HYDRA_ENUM.SOURCE);
+    },
+
     currentResource: (state) => {
       return ({ kind }) => {
         return state.resources.find((resource) => resource.kind === kind);
       };
-    },
-
-    allFunctions() {
-      return flatMap(this.resources, (r) => r.items);
     },
 
     functionSchema: (state) => {
