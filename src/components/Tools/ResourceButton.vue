@@ -1,6 +1,4 @@
 <script>
-import { mapActions } from 'pinia';
-
 import { useToolsStore } from '@/stores/tools';
 
 export default {
@@ -11,25 +9,39 @@ export default {
     }
   },
 
-  methods: {
-    ...mapActions(useToolsStore, ['addResource']),
+  setup(props) {
+    const store = useToolsStore();
 
-    add() {
-      this.addResource({
-        kind:  this.resource.kind,
-        value: {}
+    function add() {
+      const id = randomString();
+      const out = { [id]: {} };
+
+      store.addResource({
+        kind:  props.resource.kind,
+        value: out
       });
-    },
+    }
 
-    capitalize(s) {
+    function capitalize(s) {
       return s.charAt(0).toUpperCase() + s.slice(1);
     }
+
+    function randomString() {
+      return Math.random().toString(32).slice(2);
+    }
+
+    return {
+      add,
+      capitalize
+    };
   }
 };
 </script>
 
 <template>
   <div>
-    <button @click="add">Add {{ capitalize(resource.kind) }}</button>
+    <button @click="add">
+      Add {{ capitalize(resource.kind) }}
+    </button>
   </div>
 </template>

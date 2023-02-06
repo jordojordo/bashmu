@@ -1,6 +1,6 @@
 <script setup>
-import ToolsContainer from './components/Tools/ToolsContainer.vue';
-import SynthWindow from './components/SynthWindow.vue';
+import ToolsContainer from './views/ToolsContainer.vue';
+import SynthWindow from './views/SynthWindow.vue';
 </script>
 
 <template>

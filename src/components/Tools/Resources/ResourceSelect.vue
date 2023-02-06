@@ -15,35 +15,32 @@ export default {
   setup() {
     const store = useToolsStore();
     const functionItem = inject('functionItem');
+    const resource = inject('resource');
 
     const selectedFunction = ref('');
 
-    const functionValue = computed(() => {
-      return store.functionValue({
-        kind:  functionItem.kind,
-        index: functionItem.index
-      });
-    });
-    const functionSchema = computed(() => {
-      return store.functionSchema({
-        kind:  functionItem.kind,
-        index: functionItem.index
-      });
-    });
-
-    watch(selectedFunction, () => {
+    watch(selectedFunction, (neu, old) => {
       let schema = null;
 
       for ( const key in resourceSchemas ) {
-        if ( key === functionItem.kind ) {
-          schema = resourceSchemas[key][selectedFunction.value];
+        if ( key === resource.kind ) {
+          schema = structuredClone(resourceSchemas[key][selectedFunction.value]);
         }
+      }
+
+      if ( old ) {
+        store.cleanFunction({
+          resource,
+          id:               functionItem.id,
+          selectedFunction: old
+        });
       }
 
       if ( schema ) {
         store.addFunction({
-          kind:     functionItem.kind,
-          index:    functionItem.index,
+          resource,
+          id:       functionItem.id,
+          item:     functionItem.item,
           multiple: false, // TODO: need ability to add multiple functions to item
           schema:   { [selectedFunction.value]: schema }
         });
@@ -51,7 +48,7 @@ export default {
     });
 
     const functionOptions = computed(() => {
-      const functionType = HYDRA_FUNCTIONS[functionItem.kind];
+      const functionType = HYDRA_FUNCTIONS[resource.kind];
 
       return functionType;
     });
@@ -59,8 +56,6 @@ export default {
     return {
       store,
       functionOptions,
-      functionValue,
-      functionSchema,
       selectedFunction
     };
   },
@@ -81,8 +76,6 @@ export default {
 
     <div v-if="selectedFunction">
       <FunctionBody
-        :value="functionValue"
-        :schema="functionSchema"
         :selectedFunction="selectedFunction"
       />
     </div>

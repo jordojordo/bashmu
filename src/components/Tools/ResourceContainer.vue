@@ -1,6 +1,5 @@
 <script>
-import { mapActions } from 'pinia';
-import { useToolsStore } from '@/stores/tools';
+import { onUnmounted, provide } from 'vue';
 
 import Moveable from './Moveable.vue';
 import ResourceCard from './ResourceCard.vue';
@@ -8,7 +7,7 @@ import ResourceCard from './ResourceCard.vue';
 export default {
   props: {
     resource: {
-      type:     [Array, Object],
+      type:     Object,
       required: true
     }
   },
@@ -18,8 +17,10 @@ export default {
     ResourceCard
   },
 
-  data: () => ({
-    moveable: {
+  setup(props) {
+    provide('resource', props.resource);
+
+    const moveable = {
       draggable:      true,
       throttleDrag:   1,
       resizable:      false,
@@ -31,51 +32,47 @@ export default {
       throttleRotate: 0.2,
       pinchable:      true,
       origin:         false,
-    },
-    states: {
+    };
+    const moveableStates = {
       scalable:  'Scalable',
       resizable: 'Resizable',
       warpable:  'Warpable',
-    },
-    currentState: 'scalable',
-  }),
+    };
 
-  watch: {
-    currentState(newState) {
-      this.clearAllStates();
-      this.moveable[newState] = true;
-    },
-  },
-
-  methods: {
-    ...mapActions(useToolsStore, ['addResource']),
-
-    handleDrag({ target, transform }) {
+    function handleDrag({ target, transform }) {
       target.style.transform = transform;
-    },
+    }
 
-    handleResize({
+    function handleResize({
       target, width, height, transform
     }) {
       target.style.width = `${ width }px`;
       target.style.height = `${ height }px`;
       target.style.transform = transform;
-    },
+    }
 
-    clearAllStates() {
-      Object.keys(this.states).forEach((key) => {
-        this.moveable[key] = false;
+    function clearAllStates() {
+      Object.keys(moveableStates).forEach((key) => {
+        moveable[key] = false;
       });
     }
+
+    onUnmounted(() => clearAllStates());
+
+    return {
+      moveable,
+      handleDrag,
+      handleResize
+    };
   }
 };
 </script>
 
 <template>
-  <template v-if="resource.items.length" >
+  <template v-if="resource.items" >
     <Moveable
-      v-for="(item, index) in resource.items"
-      :key="index"
+      v-for="(item, id, index) in resource.items"
+      :key="id + index"
       class="moveable"
       v-bind="moveable"
       :draggable="true"
@@ -88,11 +85,7 @@ export default {
       @resize="handleResize"
     >
       <template #resourceItem>
-        <ResourceCard
-          :item="item"
-          :itemIndex="index"
-          :resourceKind="resource.kind"
-        />
+        <ResourceCard :item="item" :id="id" />
       </template>
     </Moveable>
   </template>

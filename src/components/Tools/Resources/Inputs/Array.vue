@@ -19,9 +19,10 @@ export default {
     const inputValue = ref(props.functionValue);
 
     watch(inputValue, () => {
-      const out = { [props.functionKey]: inputValue.value };
-
-      context.emit('update', out);
+      context.emit('update', {
+        functionKey: props.functionKey,
+        event:       inputValue.value
+      });
     }, { deep: true });
 
     function add() {

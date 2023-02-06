@@ -1,24 +1,10 @@
 <script>
-import { ref, watch } from 'vue';
+import { inject, ref } from 'vue';
+import { useToolsStore } from '@/stores/tools';
 
 import ArrayType from './Array.vue';
 import NumberType from './Number.vue';
 import StringType from './String.vue';
-
-
-const TEXTURE = {
-  color: {
-    r: [],
-    g: [],
-    b: []
-  },
-  src:   { input: '' },
-  shape: {
-    sides:     0,
-    radius:    0,
-    smoothing: 0
-  }
-};
 
 export default {
   name: 'TextureType',
@@ -31,6 +17,10 @@ export default {
     functionValue: {
       type:     Object,
       required: true
+    },
+    selectedFunction: {
+      type:     String,
+      required: true
     }
   },
 
@@ -40,25 +30,31 @@ export default {
     StringType
   },
 
-  setup(props, context) {
+  setup(props) {
+    const store = useToolsStore();
+    const resource     = inject('resource');
+    const functionItem = inject('functionItem');
+
     const inputValue  = ref(props.functionValue);
 
     const colorValues = ref(inputValue.value.color);
     const srcValue    = ref(inputValue.value.src);
     const shapeValues = ref(inputValue.value.shape);
 
-    watch(inputValue, () => {
-      const out = { [props.functionKey]: inputValue.value };
+    const updateTexture = (type, event) => {
+      store.$patch(() => {
+        const toUpdate = resource.items[functionItem.id][props.selectedFunction].texture;
 
-      context.emit('update', out);
-    }, { deep: true });
-
+        toUpdate[type][event.functionKey] = event.event;
+      });
+    };
 
     return {
       inputValue,
       colorValues,
       srcValue,
-      shapeValues
+      shapeValues,
+      updateTexture,
     };
   },
 };
@@ -70,21 +66,21 @@ export default {
     <!-- color -->
     <div class="color">
       <template v-for="(color, name, cIndex) in colorValues" :key="cIndex">
-        <ArrayType :functionKey="name" :functionValue="color" />
+        <ArrayType :functionKey="name" :functionValue="color" @update="e => updateTexture('color', e)" />
       </template>
     </div>
 
     <!-- src -->
     <div class="src">
       <template v-for="(src, name, srcIndex) in srcValue" :key="srcIndex">
-        <StringType :functionKey="name" :functionValue="src" />
+        <StringType :functionKey="name" :functionValue="src" @update="e => updateTexture('src', e)" />
       </template>
     </div>
 
     <!-- shape -->
     <div class="shape">
       <template v-for="(shape, name, sIndex) in shapeValues" :key="sIndex">
-        <NumberType :functionKey="name" :functionValue="shape" />
+        <NumberType :functionKey="name" :functionValue="shape" @update="e => updateTexture('shape', e)" />
       </template>
     </div>
   </div>

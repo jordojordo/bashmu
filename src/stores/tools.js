@@ -9,37 +9,37 @@ export const useToolsStore = defineStore('tools', {
     hydraResources: [
       {
         kind:          HYDRA_ENUM.BLEND,
-        items:         [],
-        sourceTargets: [],
-        bufferTargets: [],
+        items:         {},
+        sourceTargets: {},
+        bufferTargets: {},
         weight:        95
       },
       {
         kind:          HYDRA_ENUM.COLOR,
-        items:         [],
-        sourceTargets: [],
-        bufferTargets: [],
+        items:         {},
+        sourceTargets: {},
+        bufferTargets: {},
         weight:        96
       },
       {
         kind:          HYDRA_ENUM.GEOMETRY,
-        items:         [],
-        sourceTargets: [],
-        bufferTargets: [],
+        items:         {},
+        sourceTargets: {},
+        bufferTargets: {},
         weight:        98
       },
       {
         kind:          HYDRA_ENUM.MODULATE,
-        items:         [],
-        sourceTargets: [],
-        bufferTargets: [],
+        items:         {},
+        sourceTargets: {},
+        bufferTargets: {},
         weight:        97
       },      {
         kind:          HYDRA_ENUM.SOURCE,
-        items:         [],
-        sourceNames:   [],
-        sourceTargets: [],
-        bufferTargets: [],
+        items:         {},
+        sourceNames:   {},
+        sourceTargets: {},
+        bufferTargets: {},
         weight:        99
       }
     ],
@@ -72,20 +72,6 @@ export const useToolsStore = defineStore('tools', {
       return ({ kind }) => {
         return state.resources.find((resource) => resource.kind === kind);
       };
-    },
-
-    functionSchema: (state) => {
-      return ({ kind, index }) => {
-        return state.currentResource({ kind }).items[index];
-      };
-    },
-
-    functionValue: (state) => {
-      return ({ kind, index }) => {
-        const resource = state.currentResource({ kind });
-
-        return resource.items[index];
-      };
     }
   },
 
@@ -95,69 +81,67 @@ export const useToolsStore = defineStore('tools', {
     },
 
     addResource({ kind, value }) {
-      this.currentResource({ kind }).items.push(value);
+      const resource = this.currentResource({ kind });
+
+      Object.assign(resource.items, value);
     },
 
-    removeResource({ kind, index }) {
-      this.currentResource({ kind }).items.splice(index, 1);
+    removeResource({ kind, id }) {
+      const resource = this.currentResource({ kind });
+
+      delete resource.items[id];
     },
 
     addFunction({
-      kind, index, multiple, schema
+      resource, id, item, multiple, schema
     }) {
-      const resource = this.currentResource({ kind });
-      const item = resource.items[index];
-
       if ( !multiple && !isEmpty(item) ) {
-        resource.items[index] = {};
+        resource.items[id] = {};
       }
 
       Object.assign(item, schema);
     },
 
-    addSourceName({ index, name }) {
+    cleanFunction({ resource, id, selectedFunction }) {
+      delete resource.items[id][selectedFunction];
+    },
+
+    addSourceName({ id, value }) {
       const names = this.sources.sourceNames;
-      const existing = names.map((i) => Object.keys(i)[index]);
 
-      if ( existing ) {
-        this.$patch((state) => {
-          const resource = state.hydraResources.find((resource) => resource.kind === HYDRA_ENUM.SOURCE);
-
-          resource.sourceNames[index] = name;
-        });
+      if ( names[id] && !value ) {
+        delete names[id];
 
         return;
       }
 
-      names.push({ [index]: name });
+      names[id] = value;
     },
 
-    addSourceTarget({ kind, index, source }) {
-      const resource = this.currentResource({ kind });
-
-      resource.sourceTargets.push({ [index]: source });
+    addSourceTarget({ resource, id, source }) {
+      resource.sourceTargets[id] = source;
     },
 
-    removeSourceTarget({ kind, index }) {
-      const resource = this.currentResource({ kind });
-
-      delete resource.sourceNames[index];
+    removeSourceTarget({ resource, id }) {
+      delete resource.sourceNames[id];
     },
 
-    addBufferTargets({ kind, index, buffer }) {
-      const resource = this.currentResource({ kind });
 
-      resource.bufferTargets.push({ [index]: buffer });
+    /*
+      Buffers and renders are structured incorrectly,
+      they need source names to relate to.
+    */
+
+    addBufferTargets({ resource, id, buffer }) {
+      resource.bufferTargets.push({ [id]: buffer });
     },
 
-    removeBufferTarget({ kind, index }) {
-      const resource = this.currentResource({ kind });
-
-      delete resource.bufferTargets[index];
+    removeBufferTarget({ resource, id }) {
+      delete resource.bufferTargets[id];
     },
 
-    addBuffer(value) {
-      this.buffers.push(value);
+    addBuffer({ id, value }) {
+      this.buffers[id] = value;
     },
 
     removeBuffer({ buffer }) {

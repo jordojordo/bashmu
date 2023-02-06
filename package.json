@@ -9,10 +9,12 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "class-transformer": "^0.5.1",
     "hydra-synth": "^1.3.24",
     "lodash": "^4.17.21",
     "moveable": "^0.43.1",
     "pinia": "^2.0.29",
+    "reflect-metadata": "^0.1.13",
     "vue": "^3.2.45"
   },
   "devDependencies": {

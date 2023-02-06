@@ -1,19 +1,24 @@
 <script>
 import { computed, inject, ref, watch } from 'vue';
+import isEmpty from 'lodash/isEmpty';
 
 import { useToolsStore } from '@/stores/tools';
-import { HYDRA_ENUM } from '@/types';
 
 export default {
   setup() {
     const store = useToolsStore();
+    const resource = inject('resource');
     const functionItem = inject('functionItem');
 
     const sourceName     = ref('');
     const selectedSource = ref('');
     const selectedBuffer = ref('');
 
-    const isSourceCard = computed(() => functionItem.kind === HYDRA_ENUM.SOURCE);
+    const sourceNameOptions = ['o0', 'o1', 'o2', 'o3'];
+
+    const isSourceCard = computed(() => {
+      return !!store.sources.items[functionItem.id];
+    });
 
     const sources = computed(() => store.sources.sourceNames);
     const buffers = computed(() => store.buffers);
@@ -21,35 +26,41 @@ export default {
 
     watch(sourceName, () => {
       store.addSourceName({
-        index: functionItem.index,
-        name:  sourceName.value
+        id:    functionItem.id,
+        value: sourceName.value
       });
     });
 
-    watch(selectedSource, () => {
+    function addTargetSource(e) {
       store.addSourceTarget({
-        kind:   functionItem.kind,
-        index:  functionItem.index,
-        source: selectedSource.value
+        resource,
+        id:     functionItem.id,
+        source: e.target.value // not the best option
       });
-    });
+    }
 
+    /*
+      TODO: change this to mimic the function above
+    */
     watch(selectedBuffer, () => {
       store.addBufferTargets({
-        kind:   functionItem.kind,
-        index:  functionItem.index,
+        resource,
+        id:     functionItem.id,
         buffer: selectedBuffer.value
       });
     });
 
     return {
       isSourceCard,
+      isEmpty,
       sources,
       buffers,
       // renders,
       sourceName,
+      sourceNameOptions,
       selectedSource,
-      selectedBuffer
+      selectedBuffer,
+      addTargetSource
     };
   }
 };
@@ -61,16 +72,20 @@ export default {
       <template v-if="isSourceCard">
         <div>
           <label for="source-name">Source Name:</label>
-          <input type="text" name="source-name" v-model="sourceName" />
+          <select name="source-name" id="source-name" v-model="sourceName">
+            <option v-for="source in sourceNameOptions" :key="source" :value="source">
+              {{ source }}
+            </option>
+          </select>
         </div>
       </template>
 
-      <template v-if="sources.length">
+      <template v-if="!isEmpty(sources)">
         <div>
           <label for="source-target">Target Source:</label>
-          <select name="source-target" v-model="selectedSource">
-            <option v-for="source in sources" :value="source" :key="source">
-              {{ source }}
+          <select name="source-target" :value="selectedSource" @input="e => addTargetSource(e)">
+            <option v-for="[key, value] in Object.entries(sources)" :value="key" :key="key">
+              {{ value }}
             </option>
           </select>
         </div>

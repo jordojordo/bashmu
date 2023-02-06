@@ -6,16 +6,8 @@ import { useToolsStore } from '@/stores/tools';
 
 export default {
   props: {
-    schema: {
-      type:    Object,
-      default: () => {}
-    },
     selectedFunction: {
       type:     String,
-      required: true
-    },
-    value: {
-      type:     Object,
       required: true
     }
   },
@@ -23,6 +15,7 @@ export default {
   setup(props) {
     const store = useToolsStore();
     const functionItem = inject('functionItem');
+    const resource = inject('resource');
 
     const state = reactive({ componentsToLoad: [] });
 
@@ -40,7 +33,7 @@ export default {
           return loadComponent('array');
         }
 
-        if ( Object.hasOwn(props.schema[props.selectedFunction], 'texture') ) {
+        if ( Object.hasOwn(functionItem.item[props.selectedFunction], 'texture') ) {
           return loadComponent('texture');
         }
       }
@@ -82,20 +75,19 @@ export default {
       return path.split('.');
     }
 
-    const updateFunction = (event) => {
-      store.$patch((state) => {
-        const resources = state.hydraResources;
-        const out = resources.find((r) => r.kind === functionItem.kind);
+    const updateFunction = ({ functionKey, event }) => {
+      store.$patch(() => {
+        const out = resource.items[functionItem.id][props.selectedFunction];
 
-        for ( const key of Object.keys(event) ) {
-          out.items[functionItem.index][props.selectedFunction][key] = event[key];
-        }
+        out[functionKey] = event;
       });
     };
 
     return {
       state,
       store,
+      functionItem,
+      resource,
       componentForType,
       getComponentValue,
       updateFunction
@@ -105,11 +97,12 @@ export default {
 </script>
 
 <template>
-  <div class="component-input" v-for="(val, name, index) in schema[selectedFunction]" :key="index">
+  <div class="component-input" v-for="(val, name, index) in functionItem.item[selectedFunction]" :key="index">
     <component
       :is="componentForType(val)"
       :functionKey="name"
-      :functionValue="getComponentValue(schema[selectedFunction], name)"
+      :functionValue="getComponentValue(functionItem.item[selectedFunction], name)"
+      :selectedFunction="selectedFunction"
       @update="updateFunction"
     />
   </div>

@@ -2,10 +2,10 @@
 import { computed } from 'vue';
 import { useToolsStore } from '@/stores/tools';
 
-import BufferInput from './BufferInput.vue';
-import RenderInput from './RenderInput.vue';
-import ResourceButton from './ResourceButton.vue';
-import ResourceContainer from './ResourceContainer.vue';
+import BufferInput from '@/components/Tools/BufferInput.vue';
+import RenderInput from '@/components/Tools/RenderInput.vue';
+import ResourceButton from '@/components/Tools/ResourceButton.vue';
+import ResourceContainer from '@/components/Tools/ResourceContainer.vue';
 
 export default {
   components: {
